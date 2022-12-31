@@ -27,4 +27,4 @@ main = do
 mkApp :: Component {}
 mkApp = do
   component "App" \_ -> React.do
-    pure (R.text "Hello!")
+    pure (R.text "Hello there!")

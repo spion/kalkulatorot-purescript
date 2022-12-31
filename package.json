@@ -7,11 +7,17 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "spago bundle-app --main Main --to public/index.js",
+    "watch": "spago bundle-app --main Main --to public/index.js --watch",
+    "serve": "http-server -c-1 public",
+    "dev": "run-p watch serve"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "http-server":"^14.1.1",
+    "npm-run-all":"^4.1.5",
     "esbuild": "^0.16.12",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
