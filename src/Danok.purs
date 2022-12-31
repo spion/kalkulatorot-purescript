@@ -1,9 +1,24 @@
-module Danok (Danoci, Model, bruto2neto, initModel, licnoOsloboduvanje, minBruto, minNeto, neto2bruto, procentiDanoci, procentiPridonesi) where
+module Danok
+  ( Danoci
+  , Model
+  , Pridonesi
+  , bruto2neto
+  , initModel
+  , licnoOsloboduvanje
+  , minBruto
+  , minNeto
+  , neto2bruto
+  , procentiDanoci
+  , procentiPridonesi
+  , sumaPridonesi
+  )
+  where
 
 import Prelude
 
+import Data.Foldable (sum)
 import Data.Generic.Rep (from)
-import Data.Int (floor, round)
+import Data.Int (floor, round, toNumber)
 
 type Model =
     { bruto :: Int
@@ -31,7 +46,7 @@ initModel =
 
 
 maxSafeInt :: Int
-maxSafeInt = 4503599627370496
+maxSafeInt = 2147483647
 
 
 maxBrutoNetoOdnos :: Int
@@ -64,7 +79,7 @@ minOsnovica = prosecnaPlata / 2
 
 od :: Number -> Int -> Int
 od x val =
-    round $ x * (from val)
+    round $ x * (toNumber val)
 
 
 type Danoci number =
@@ -72,17 +87,17 @@ type Danoci number =
     }
 
 
-procentiDanoci :: Danoci Float
+procentiDanoci :: Danoci Number
 procentiDanoci =
     { dld10: 0.1 }
 
 
-presmetajDanoci :: Int -> Danoci Float -> Danoci Int
+presmetajDanoci :: Int -> Danoci Number -> Danoci Int
 presmetajDanoci osnova d =
-    { dld10: osnova |> od d.dld10 }
+    { dld10: od d.dld10 osnova }
 
 
-sumaDanoci :: Danoci number -> number
+sumaDanoci :: forall number . Danoci number -> number
 sumaDanoci d = d.dld10
 
 
@@ -94,7 +109,7 @@ type Pridonesi number =
     }
 
 
-procentiPridonesi :: Pridonesi Float
+procentiPridonesi :: Pridonesi Number
 procentiPridonesi =
     { penzisko: 0.188
     , zdravstveno: 0.075
@@ -103,19 +118,19 @@ procentiPridonesi =
     }
 
 
-presmetajPridonesi :: Int -> Pridonesi Float -> Pridonesi Int
+presmetajPridonesi :: Int -> Pridonesi Number -> Pridonesi Int
 presmetajPridonesi bruto p =
-    { penzisko: bruto |> od p.penzisko
-    , zdravstveno: bruto |> od p.zdravstveno
-    , nevrabotenost: bruto |> od p.nevrabotenost
-    , boluvanje: bruto |> od p.boluvanje
+    { penzisko: bruto # od p.penzisko
+    , zdravstveno: bruto # od p.zdravstveno
+    , nevrabotenost: bruto # od p.nevrabotenost
+    , boluvanje: bruto # od p.boluvanje
     }
 
 
-sumaPridonesi :: Pridonesi number -> number
+-- sumaPridonesi :: forall number. Semiring number => Pridonesi number -> number
 sumaPridonesi p =
     [ p.penzisko, p.zdravstveno, p.nevrabotenost, p.boluvanje ]
-        |> List.sum
+        # sum
 
 
 
@@ -170,10 +185,9 @@ findBruto netoVal =
 
 binSearch :: Int -> Int -> Int -> Int
 binSearch searchValue lo hi =
-    let halfDistanceHiLo = (hi - lo) / 2
-
+    let
         mid =
-            lo + floor (from (hi - lo) / 2.0)
+            lo + floor (toNumber (hi - lo) / 2.0)
 
         value =
             (bruto2neto mid).neto
