@@ -1,10 +1,5 @@
 module View
-  ( bold
-  , containerStyle
-  , pdfLinkStyle
-  , pdfLinkTxt
-  , ribbon
-  )
+  ( view )
   where
 
 
@@ -16,9 +11,9 @@ import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Number (round)
 import Effect (Effect)
 import React.Basic.DOM as R
-import React.Basic.DOM.Events (preventDefault, targetValue)
+import React.Basic.DOM.Events (targetValue)
 import React.Basic.Events (handler)
-import React.Basic.Hooks (Component, JSX, Reducer, component, mkReducer, useReducer, (/\))
+import React.Basic.Hooks (Component, JSX, Reducer, component, mkReducer, (/\))
 import React.Basic.Hooks as React
 
 data Action = Bruto String | Neto String
@@ -149,8 +144,8 @@ tdLeft txt =
     R.td {style: rowStyle, children: [ R.text txt ]}
 
 
-inputFields :: Component {model :: Model, dispatch :: Action -> Effect Unit }
-inputFields = do
+mkInputFields :: Component {model :: Model, dispatch :: Action -> Effect Unit }
+mkInputFields = do
 
   -- reducer <- reducerEff
 
@@ -187,7 +182,6 @@ inputFields = do
         ]
     }
 
-
 infoIcon :: JSX
 infoIcon =
     R.span {
@@ -218,88 +212,97 @@ details model =
         [ R.table_
             [ R.tr {style: bold, children:
                 [ tdLeft "Бруто"
-                , R.td_ [ R.text "" ]
-                , R.td_ [ R.text (show model.bruto) ]
-                , R.td_ [ R.text "МКД" ]
+                , td ""
+                , td (show model.bruto)
+                , td "МКД"
                 ]}
             , R.tr_
                 [ tdLeft "Придонеси за задолжително ПИО"
-                , R.td_ [R.text $ showPercentage procentiPridonesi.penzisko]
-                , R.td_ [R.text $ show model.pridonesi.penzisko]
-                , R.td_ [R.text $ "МКД" ]
+                , td (showPercentage procentiPridonesi.penzisko)
+                , td (show model.pridonesi.penzisko)
+                , td "МКД"
                 ]
             , R.tr_
                 [ tdLeft "Придонеси за задолжително здравствено осигурување"
-                , R.td_ [R.text $ showPercentage procentiPridonesi.zdravstveno]
-                , R.td_ [R.text $ show model.pridonesi.zdravstveno]
-                , R.td_ [R.text $ "МКД" ]
+                , td (showPercentage procentiPridonesi.zdravstveno)
+                , td (show model.pridonesi.zdravstveno)
+                , td "МКД"
                 ]
             , R.tr_
                 [ tdLeft "Придонес за осигурување во случај на невработеност"
-                , R.td_ [R.text $ showPercentage procentiPridonesi.nevrabotenost]
-                , R.td_ [R.text $ show model.pridonesi.nevrabotenost]
-                , R.td_ [R.text $ "МКД" ]
+                , td (showPercentage procentiPridonesi.nevrabotenost)
+                , td (show model.pridonesi.nevrabotenost)
+                , td "МКД"
                 ]
             , R.tr_
                 [ tdLeft "Дополнителен придонес за задолжително осигурување во случај повреда или професионално заболување"
-                , R.td_ [R.text $ showPercentage procentiPridonesi.boluvanje]
-                , R.td_ [R.text $ show model.pridonesi.boluvanje]
-                , R.td_ [R.text $ "МКД" ]
+                , td (showPercentage procentiPridonesi.boluvanje)
+                , td (show model.pridonesi.boluvanje)
+                , td "МКД"
                 ]
             , R.tr {style: bold, children:
                 [ tdLeft "Вкупно придонеси"
-                , R.td_ [R.text ""]
-                , R.td_ [R.text $ show model.vkupnoPridonesi]
-                , R.td_ [R.text $ "МКД" ]
+                , td ""
+                , td (show model.vkupnoPridonesi)
+                , td "МКД"
                 ]}
             , R.tr_
                 [ tdLeft "Бруто плата намалена за придонеси"
-                , R.td_ [R.text ""]
-                , R.td_ [R.text $ show model.brutoMinusPridonesi]
-                , R.td_ [R.text $ "МКД" ]
+                , td ""
+                , td (show model.brutoMinusPridonesi)
+                , td "МКД"
                 ]
             , R.tr_
                 [ tdLeft "Лично ослободување"
-                , R.td_ [R.text ""]
-                , R.td_ [R.text $ show licnoOsloboduvanje]
-                , R.td_ [R.text $ "МКД" ]
+                , td ""
+                , td (show licnoOsloboduvanje)
+                , td "МКД"
                 ]
             , R.tr_
                 [ tdLeft "Даночна основа за пресметка на данок на личен доход"
-                , R.td_ [R.text ""]
-                , R.td_ [R.text $ show model.dldOsnova10]
-                , R.td_ [R.text $ "МКД" ]
+                , td ""
+                , td (show model.dldOsnova10)
+                , td "МКД"
                 ]
             , R.tr_
                 [ tdLeft "Данок на личен доход"
-                , R.td_ [R.text $ showPercentage procentiDanoci.dld10]
-                , R.td_ [R.text $ show model.danoci.dld10]
-                , R.td_ [R.text $ "МКД" ]
+                , td (showPercentage procentiDanoci.dld10)
+                , td (show model.danoci.dld10)
+                , td "МКД"
                 ]
             , R.tr_
                 [ tdLeft "Вкупно придонеси и данок"
-                , R.td_ [R.text ""]
-                , R.td_ [R.text $ show model.vkupnoDavacki]
-                , R.td_ [R.text $ "МКД" ]
+                , td ""
+                , td (show model.vkupnoDavacki)
+                , td "МКД"
                 ]
             , R.tr {style: bold, children:
                 [ tdLeft "Нето"
-                , R.td_ [R.text ""]
-                , R.td_ [R.text $ show model.neto]
-                , R.td_ [R.text $ "МКД" ]
+                , td ""
+                , td (show model.neto)
+                , td "МКД"
                 ]}
             ]
         ]
       }
 
 
--- view : Model -> Html Msg
--- view model =
---     div []
---         [ div [] [ ribbon ]
---         , div [] [ pdfLink ]
---         , div containerStyle
---             [ inputFields model
---             , details model
---             ]
---         ]
+view :: Component {}
+view = do
+
+  reducer <- reducerEff
+  inputFields <- mkInputFields
+
+  component "MainView" \_ -> React.do
+    model /\ dispatch <- React.useReducer (bruto2neto 0) reducer
+
+    pure $ R.div_
+        [ R.div_ [ ribbon ]
+        , R.div_ [ pdfLink ]
+        , R.div {
+             style: containerStyle, children:
+            [ inputFields { model: model, dispatch: dispatch }
+            , details model
+            ]
+          }
+        ]
