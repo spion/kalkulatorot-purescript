@@ -19,6 +19,7 @@ to generate this file without the comments in this block.
   , "web-dom"
   , "web-html"
   , "prelude"
+  , "numbers"
   , "react-basic"
   , "react-basic-dom"
   , "react-basic-hooks"

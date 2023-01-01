@@ -10,9 +10,10 @@ module View
 
 import Prelude
 
-import Danok (Model, bruto2neto, neto2bruto)
+import Danok (Model, bruto2neto, licnoOsloboduvanje, neto2bruto, procentiDanoci, procentiPridonesi)
 import Data.Int (fromString)
 import Data.Maybe (Maybe(..), fromMaybe)
+import Data.Number (round)
 import Effect (Effect)
 import React.Basic.DOM as R
 import React.Basic.DOM.Events (preventDefault, targetValue)
@@ -187,100 +188,109 @@ inputFields = do
     }
 
 
--- infoIcon : Html Msg
--- infoIcon =
---     span
---         [ display: "inline-block"
---         , width: "16px"
---         , height: "16px"
---         , text-align: "center"
---         , border-radius: "50%"
---         , background: "#9898ea"
---         , color: "#fff"
---         , margin-right: "5px"
---         , user-select: "none"
---         ]
---         [ i [] [ text "i" ] ]
+infoIcon :: JSX
+infoIcon =
+    R.span {
+        style: R.css
+        { display: "inline-block"
+        , width: "16px"
+        , height: "16px"
+        , textAlign: "center"
+        , borderRadius: "50%"
+        , background: "#9898ea"
+        , color: "#fff"
+        , marginRight: "5px"
+        , userSelect: "none"
+        },
+        children: [ R.i_ [ R.text "i" ] ]
+    }
+
+showPercentage :: Number -> String
+showPercentage num = (show $ round (num * 10000.0) / 100.0) <> "%"
 
 
--- details : Model -> Html Msg
--- details model =
---     div [ margin: "0 0 50px 0" ]
---         [ table []
---             [ tr bold
---                 [ tdLeft "Бруто"
---                 , td ""
---                 , td (String.fromInt model.bruto)
---                 , td "МКД"
---                 ]
---             , tr []
---                 [ tdLeft "Придонеси за задолжително ПИО"
---                 , td (Round.round 2 (procentiPridonesi.penzisko * 100) ++ "%")
---                 , td (String.fromInt model.pridonesi.penzisko)
---                 , td "МКД"
---                 ]
---             , tr []
---                 [ tdLeft "Придонеси за задолжително здравствено осигурување"
---                 , td (Round.round 2 (procentiPridonesi.zdravstveno * 100) ++ "%")
---                 , td (String.fromInt model.pridonesi.zdravstveno)
---                 , td "МКД"
---                 ]
---             , tr []
---                 [ tdLeft "Придонес за осигурување во случај на невработеност"
---                 , td (Round.round 2 (procentiPridonesi.nevrabotenost * 100) ++ "%")
---                 , td (String.fromInt model.pridonesi.nevrabotenost)
---                 , td "МКД"
---                 ]
---             , tr []
---                 [ tdLeft "Дополнителен придонес за задолжително осигурување во случај повреда или професионално заболување"
---                 , td (Round.round 2 (procentiPridonesi.boluvanje * 100) ++ "%")
---                 , td (String.fromInt model.pridonesi.boluvanje)
---                 , td "МКД"
---                 ]
---             , tr bold
---                 [ tdLeft "Вкупно придонеси"
---                 , td ""
---                 , td (String.fromInt model.vkupnoPridonesi)
---                 , td "МКД"
---                 ]
---             , tr []
---                 [ tdLeft "Бруто плата намалена за придонеси"
---                 , td ""
---                 , td (String.fromInt model.brutoMinusPridonesi)
---                 , td "МКД"
---                 ]
---             , tr []
---                 [ tdLeft "Лично ослободување"
---                 , td ""
---                 , td (String.fromInt licnoOsloboduvanje)
---                 , td "МКД"
---                 ]
---             , tr []
---                 [ tdLeft "Даночна основа за пресметка на данок на личен доход"
---                 , td ""
---                 , td (String.fromInt model.dldOsnova10)
---                 , td "МКД"
---                 ]
---             , tr []
---                 [ tdLeft "Данок на личен доход"
---                 , td (Round.round 2 (procentiDanoci.dld10 * 100) ++ "%")
---                 , td (String.fromInt model.danoci.dld10)
---                 , td "МКД"
---                 ]
---             , tr []
---                 [ tdLeft "Вкупно придонеси и данок"
---                 , td ""
---                 , td (String.fromInt model.vkupnoDavacki)
---                 , td "МКД"
---                 ]
---             , tr bold
---                 [ tdLeft "Нето"
---                 , td ""
---                 , td (String.fromInt model.neto)
---                 , td "МКД"
---                 ]
---             ]
---         ]
+details :: Model -> JSX
+details model =
+    R.div
+      { style: R.css { margin: "0 0 50px 0" }
+      , children:
+
+        [ R.table_
+            [ R.tr {style: bold, children:
+                [ tdLeft "Бруто"
+                , R.td_ [ R.text "" ]
+                , R.td_ [ R.text (show model.bruto) ]
+                , R.td_ [ R.text "МКД" ]
+                ]}
+            , R.tr_
+                [ tdLeft "Придонеси за задолжително ПИО"
+                , R.td_ [R.text $ showPercentage procentiPridonesi.penzisko]
+                , R.td_ [R.text $ show model.pridonesi.penzisko]
+                , R.td_ [R.text $ "МКД" ]
+                ]
+            , R.tr_
+                [ tdLeft "Придонеси за задолжително здравствено осигурување"
+                , R.td_ [R.text $ showPercentage procentiPridonesi.zdravstveno]
+                , R.td_ [R.text $ show model.pridonesi.zdravstveno]
+                , R.td_ [R.text $ "МКД" ]
+                ]
+            , R.tr_
+                [ tdLeft "Придонес за осигурување во случај на невработеност"
+                , R.td_ [R.text $ showPercentage procentiPridonesi.nevrabotenost]
+                , R.td_ [R.text $ show model.pridonesi.nevrabotenost]
+                , R.td_ [R.text $ "МКД" ]
+                ]
+            , R.tr_
+                [ tdLeft "Дополнителен придонес за задолжително осигурување во случај повреда или професионално заболување"
+                , R.td_ [R.text $ showPercentage procentiPridonesi.boluvanje]
+                , R.td_ [R.text $ show model.pridonesi.boluvanje]
+                , R.td_ [R.text $ "МКД" ]
+                ]
+            , R.tr {style: bold, children:
+                [ tdLeft "Вкупно придонеси"
+                , R.td_ [R.text ""]
+                , R.td_ [R.text $ show model.vkupnoPridonesi]
+                , R.td_ [R.text $ "МКД" ]
+                ]}
+            , R.tr_
+                [ tdLeft "Бруто плата намалена за придонеси"
+                , R.td_ [R.text ""]
+                , R.td_ [R.text $ show model.brutoMinusPridonesi]
+                , R.td_ [R.text $ "МКД" ]
+                ]
+            , R.tr_
+                [ tdLeft "Лично ослободување"
+                , R.td_ [R.text ""]
+                , R.td_ [R.text $ show licnoOsloboduvanje]
+                , R.td_ [R.text $ "МКД" ]
+                ]
+            , R.tr_
+                [ tdLeft "Даночна основа за пресметка на данок на личен доход"
+                , R.td_ [R.text ""]
+                , R.td_ [R.text $ show model.dldOsnova10]
+                , R.td_ [R.text $ "МКД" ]
+                ]
+            , R.tr_
+                [ tdLeft "Данок на личен доход"
+                , R.td_ [R.text $ showPercentage procentiDanoci.dld10]
+                , R.td_ [R.text $ show model.danoci.dld10]
+                , R.td_ [R.text $ "МКД" ]
+                ]
+            , R.tr_
+                [ tdLeft "Вкупно придонеси и данок"
+                , R.td_ [R.text ""]
+                , R.td_ [R.text $ show model.vkupnoDavacki]
+                , R.td_ [R.text $ "МКД" ]
+                ]
+            , R.tr {style: bold, children:
+                [ tdLeft "Нето"
+                , R.td_ [R.text ""]
+                , R.td_ [R.text $ show model.neto]
+                , R.td_ [R.text $ "МКД" ]
+                ]}
+            ]
+        ]
+      }
 
 
 -- view : Model -> Html Msg
