@@ -20,6 +20,8 @@ to generate this file without the comments in this block.
   , "web-html"
   , "prelude"
   , "numbers"
+  , "integers"
+  , "foldable-traversable"
   , "react-basic"
   , "react-basic-dom"
   , "react-basic-hooks"

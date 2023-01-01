@@ -1,5 +1,5 @@
 module View
-  ( view )
+  ( mkMainView )
   where
 
 
@@ -287,8 +287,8 @@ details model =
       }
 
 
-view :: Component {}
-view = do
+mkMainView :: Component {}
+mkMainView = do
 
   reducer <- reducerEff
   inputFields <- mkInputFields

@@ -5,9 +5,9 @@ import Prelude
 import Data.Maybe (Maybe(..))
 import Effect (Effect)
 import Effect.Exception (throw)
-import React.Basic.DOM as R
 import React.Basic.DOM.Client (createRoot, renderRoot)
 import React.Basic.Hooks (Component, component)
+import View (mkMainView)
 import Web.DOM.NonElementParentNode (getElementById)
 import Web.HTML (window)
 import Web.HTML.HTMLDocument (toNonElementParentNode)
@@ -26,5 +26,7 @@ main = do
 
 mkApp :: Component {}
 mkApp = do
+  mainView <- mkMainView
+
   component "App" \_ -> React.do
-    pure (R.text "Hello there!")
+    pure $ mainView {}
