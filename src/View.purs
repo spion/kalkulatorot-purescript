@@ -8,15 +8,34 @@ module View
   where
 
 
+import Prelude
+
+import Danok (Model, bruto2neto, neto2bruto)
+import Data.Int (fromString)
+import Data.Maybe (Maybe(..), fromMaybe)
+import Effect (Effect)
 import React.Basic.DOM as R
-import React.Basic.Hooks (JSX)
+import React.Basic.DOM.Events (preventDefault, targetValue)
+import React.Basic.Events (handler)
+import React.Basic.Hooks (Component, JSX, Reducer, component, mkReducer, useReducer, (/\))
+import React.Basic.Hooks as React
 
--- R.css to build css instead of style
+data Action = Bruto String | Neto String
 
+reducerFn :: Model -> Action -> Model
+reducerFn model msg = case msg of
+    Bruto b ->
+      case fromString b of
+        Nothing -> model
+        Just bv -> bruto2neto bv
+    Neto n ->
+      case fromString n of
+        Nothing -> model
+        Just nv -> neto2bruto nv
 
--- type Msg
---     = Bruto String
---     | Neto String
+reducerEff :: Effect (Reducer Model Action)
+reducerEff = mkReducer reducerFn
+
 
 
 -- containerStyle : List (Attribute msg)
@@ -129,16 +148,40 @@ tdLeft txt =
     R.td {style: rowStyle, children: [ R.text txt ]}
 
 
-inputFields :: Model -> JSX
-inputFields model =
-    R.table {style: splitter, children:
-        [ tr []
-            [ th [] [ text "Бруто" ]
-            , th [] [ text "Нето" ]
+inputFields :: Component {model :: Model, dispatch :: Action -> Effect Unit }
+inputFields = do
+
+  -- reducer <- reducerEff
+
+  component "InputFields" \props -> React.do
+
+    -- state /\ dispatch <- React.useReducer (bruto2neto 0) reducer
+
+    -- Need to deal with onInput Bruto
+    pure $ R.table {style: splitter, children:
+        [ R.tr_
+            [ R.th_ [ R.text "Бруто" ]
+            , R.th_ [ R.text "Нето" ]
             ]
-        , tr []
-            [ Html.td [] [ input ([ title "Бруто, износ кој ја вклучува чистата плата што ја добива работникот (нето-плата) заедно со сите јавни давачки (даноци и придонеси), во бруто-платата се вклучени надоместоците кои ги добиваат вработените за храна и за превоз", type_ "number", placeholder "Бруто", onInput Bruto, value (String.fromInt model.bruto) ] ++ inputStyle) [] ]
-            , Html.td [] [ input ([ title "Нето, чистата плата што ја добива работникот на својата трансакциска сметка", type_ "number", placeholder "Нето", onInput Neto, value (String.fromInt model.neto) ] ++ inputStyle) [] ]
+        , R.tr_
+            [ R.td_ [
+                R.input {
+                  title: "Бруто, износ кој ја вклучува чистата плата што ја добива работникот (нето-плата) заедно со сите јавни давачки (даноци и придонеси), во бруто-платата се вклучени надоместоците кои ги добиваат вработените за храна и за превоз",
+                  type: "number",
+                  placeholder: "Бруто",
+                  onChange: handler targetValue \v -> props.dispatch (Bruto $ fromMaybe "" v),
+                  value: (show props.model.bruto), style: inputStyle
+                }
+              ]
+            , R.td_ [
+                R.input {
+                  title: "Нето, чистата плата што ја добива работникот на својата трансакциска сметка",
+                  type: "number",
+                  placeholder: "Нето",
+                  onChange: handler targetValue \v -> props.dispatch (Neto $ fromMaybe "" v),
+                  value: (show props.model.neto), style: inputStyle
+                }
+              ]
             ]
         ]
     }

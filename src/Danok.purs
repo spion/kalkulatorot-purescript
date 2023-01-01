@@ -205,3 +205,5 @@ binSearch searchValue lo hi =
 neto2bruto :: Int -> Model
 neto2bruto val =
     bruto2neto (findBruto val)
+
+
