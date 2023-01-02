@@ -79,7 +79,7 @@ minOsnovica = prosecnaPlata / 2
 
 od :: Number -> Int -> Int
 od x val =
-    round $ x * (toNumber val)
+    round (x * (toNumber val))
 
 
 type Danoci number =

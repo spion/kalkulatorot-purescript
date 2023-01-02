@@ -15,16 +15,17 @@ to generate this file without the comments in this block.
   [ "console"
   , "effect"
   , "exceptions"
-  , "maybe"
-  , "web-dom"
-  , "web-html"
-  , "prelude"
-  , "numbers"
-  , "integers"
   , "foldable-traversable"
+  , "integers"
+  , "maybe"
+  , "numbers"
+  , "prelude"
+  , "profunctor-lenses"
   , "react-basic"
   , "react-basic-dom"
   , "react-basic-hooks"
+  , "web-dom"
+  , "web-html"
   ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]
