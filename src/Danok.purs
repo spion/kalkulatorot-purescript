@@ -175,14 +175,6 @@ bruto2neto bruto =
     }
 
 
-bruto2netoPoly :: Poly
-bruto2netoPoly = mkPoly \bruto ->
-  let
-    osnovica = bruto
-
-    pridonesi =
-
-
 findBruto :: Int -> Int
 findBruto netoVal =
     let

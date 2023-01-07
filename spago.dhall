@@ -26,6 +26,7 @@ to generate this file without the comments in this block.
   , "react-basic-hooks"
   , "web-dom"
   , "web-html"
+  , "heterogeneous"
   ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]
