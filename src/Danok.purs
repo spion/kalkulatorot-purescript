@@ -19,6 +19,7 @@ import Prelude
 import Data.Foldable (sum)
 import Data.Generic.Rep (from)
 import Data.Int (floor, round, toNumber)
+import InvertablePoly (Poly(..), mkPoly)
 
 type Model =
     { bruto :: Int
@@ -172,6 +173,14 @@ bruto2neto bruto =
     , vkupnoPridonesi: vkupnoPridonesi
     , brutoMinusPridonesi: bruto - vkupnoPridonesi
     }
+
+
+bruto2netoPoly :: Poly
+bruto2netoPoly = mkPoly \bruto ->
+  let
+    osnovica = bruto
+
+    pridonesi =
 
 
 findBruto :: Int -> Int
