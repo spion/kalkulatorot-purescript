@@ -132,21 +132,22 @@ inputStyle = R.css
     }
 
 
-rowStyle :: R.CSS
-rowStyle = R.css
+rowStyle :: { borderBottom :: String, padding :: String, textAlign :: String }
+rowStyle =
     { borderBottom: "1px solid #afafaf"
     , padding: "15px"
+    , textAlign: "left"
     }
 
 
 td :: String -> JSX
 td txt =
-  R.td { style: R.css { textAlign: "right"}, children: [ R.text txt ] }
+  R.td { style: R.css (rowStyle { textAlign = "right"}), children: [ R.text txt ] }
 
 
 tdLeft :: String -> JSX
 tdLeft txt =
-    R.td {style: rowStyle, children: [ R.text txt ]}
+    R.td {style: R.css rowStyle, children: [ R.text txt ]}
 
 
 mkInputFields :: Component {model :: Model, dispatch :: Action -> Effect Unit }
