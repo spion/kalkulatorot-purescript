@@ -2,11 +2,11 @@ module DanokPoly where
 
 import Prelude
 
-import Data.Function (applyFlipped)
 import Heterogeneous.Mapping (hmap)
 import InvertablePoly (Poly, mkPoly, pnum, toFunction, toInverseFunction, (:*:), (:+:), (:-:))
 
-procentiPridonesi ∷ { boluvanje ∷ Number , nevrabotenost ∷ Number , penzisko ∷ Number , zdravstveno ∷ Number }
+procentiPridonesi ∷
+  { boluvanje ∷ Number , nevrabotenost ∷ Number , penzisko ∷ Number , zdravstveno ∷ Number }
 procentiPridonesi =
     { penzisko: 0.188
     , zdravstveno: 0.075

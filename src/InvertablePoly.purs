@@ -38,16 +38,8 @@ multiplierOf (Constituent _ nn) = nn
 
 data Poly = Poly (List Constituent)
 
-
-instance Semigroup Poly where
-  append (Poly p1) (Poly p2) = Poly (p1 <> p2)
-
-instance Monoid Poly where
-  mempty = Poly Nil
-
-
 padd :: Poly -> Poly -> Poly
-padd = append
+padd (Poly p1) (Poly p2) = Poly (p1 <> p2)
 
 infixr 6 padd as :+:
 
@@ -64,7 +56,7 @@ pmul a (Poly l) = Poly (map (cmul a) l)
 infixr 4 pmul as :*:
 
 psub :: Poly -> Poly -> Poly
-psub p1 p2 = append p1 (pmul (-1.0) p2)
+psub p1 p2 = padd p1 (pmul (-1.0) p2)
 
 infixr 6 psub as :-:
 
