@@ -19,6 +19,17 @@ procentiDanoci =
     { dld10: 0.1 }
 
 
+licnoOsloboduvanje :: Number
+licnoOsloboduvanje = 8788.0
+
+
+prosecnaPlata :: Number
+prosecnaPlata = 43509.0
+
+maxOsnovica :: Number
+maxOsnovica = prosecnaPlata * 16.0
+
+
 type Results a =
   { bruto :: a
   , brutoMinusPridonesi :: a
@@ -33,8 +44,6 @@ type Results a =
   , vkupnoPridonesi :: a
   }
 
-licnoOsloboduvanje :: Number
-licnoOsloboduvanje = 8788.0
 
 od :: Number -> Poly -> Poly
 od percent exp = percent :*: exp
@@ -85,13 +94,16 @@ brutoPFunctions = hmap toFunction brutoPolys
 
 
 applyWithArg :: Number -> (Number -> Number) -> Number
-
 applyWithArg arg f = f arg
 
-bruto2neto :: Number -> Results Number
+type Model = Results Number
+
+bruto2neto :: Number -> Model
 bruto2neto bruto = hmap (applyWithArg bruto) brutoPFunctions
 
 bruto2netoInverse ∷ Number → Number
 bruto2netoInverse = toInverseFunction brutoPolys.neto
-neto2bruto  ∷ Number -> Results Number
+
+neto2bruto  ∷ Number -> Model
 neto2bruto = bruto2neto <<< bruto2netoInverse
+

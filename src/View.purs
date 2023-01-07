@@ -5,10 +5,10 @@ module View
 
 import Prelude
 
-import Danok (Model, bruto2neto, licnoOsloboduvanje, neto2bruto, procentiDanoci, procentiPridonesi)
-import Data.Int (fromString)
+import DanokPoly (Model, bruto2neto, licnoOsloboduvanje, neto2bruto, procentiDanoci, procentiPridonesi)
+import Data.Int as DI
 import Data.Maybe (Maybe(..), fromMaybe)
-import Data.Number (round)
+import Data.Number (fromString, round)
 import Effect (Effect)
 import React.Basic.DOM as R
 import React.Basic.DOM.Events (targetValue)
@@ -17,6 +17,11 @@ import React.Basic.Hooks (Component, JSX, Reducer, component, mkReducer, (/\))
 import React.Basic.Hooks as React
 
 data Action = Bruto String | Neto String
+
+
+showInt :: Number -> String
+
+showInt num = show (DI.round num)
 
 reducerFn :: Model -> Action -> Model
 reducerFn model msg = case msg of
@@ -166,7 +171,7 @@ mkInputFields = do
                   type: "number",
                   placeholder: "Бруто",
                   onChange: handler targetValue \v -> props.dispatch (Bruto $ fromMaybe "" v),
-                  value: (show props.model.bruto), style: inputStyle
+                  value: (showInt props.model.bruto), style: inputStyle
                 }
               ]
             , R.td_ [
@@ -175,7 +180,7 @@ mkInputFields = do
                   type: "number",
                   placeholder: "Нето",
                   onChange: handler targetValue \v -> props.dispatch (Neto $ fromMaybe "" v),
-                  value: (show props.model.neto), style: inputStyle
+                  value: (showInt props.model.neto), style: inputStyle
                 }
               ]
             ]
@@ -213,73 +218,73 @@ details model =
             [ R.tr {style: bold, children:
                 [ tdLeft "Бруто"
                 , td ""
-                , td (show model.bruto)
+                , td (showInt model.bruto)
                 , td "МКД"
                 ]}
             , R.tr_
                 [ tdLeft "Придонеси за задолжително ПИО"
                 , td (showPercentage procentiPridonesi.penzisko)
-                , td (show model.pridonesi.penzisko)
+                , td (showInt model.pridonesiPenzisko)
                 , td "МКД"
                 ]
             , R.tr_
                 [ tdLeft "Придонеси за задолжително здравствено осигурување"
                 , td (showPercentage procentiPridonesi.zdravstveno)
-                , td (show model.pridonesi.zdravstveno)
+                , td (showInt model.pridonesiZdravstveno)
                 , td "МКД"
                 ]
             , R.tr_
                 [ tdLeft "Придонес за осигурување во случај на невработеност"
                 , td (showPercentage procentiPridonesi.nevrabotenost)
-                , td (show model.pridonesi.nevrabotenost)
+                , td (showInt model.pridonesiNevrabotenost)
                 , td "МКД"
                 ]
             , R.tr_
                 [ tdLeft "Дополнителен придонес за задолжително осигурување во случај повреда или професионално заболување"
                 , td (showPercentage procentiPridonesi.boluvanje)
-                , td (show model.pridonesi.boluvanje)
+                , td (showInt model.pridonesiBoluvanje)
                 , td "МКД"
                 ]
             , R.tr {style: bold, children:
                 [ tdLeft "Вкупно придонеси"
                 , td ""
-                , td (show model.vkupnoPridonesi)
+                , td (showInt model.vkupnoPridonesi)
                 , td "МКД"
                 ]}
             , R.tr_
                 [ tdLeft "Бруто плата намалена за придонеси"
                 , td ""
-                , td (show model.brutoMinusPridonesi)
+                , td (showInt model.brutoMinusPridonesi)
                 , td "МКД"
                 ]
             , R.tr_
                 [ tdLeft "Лично ослободување"
                 , td ""
-                , td (show licnoOsloboduvanje)
+                , td (showInt licnoOsloboduvanje)
                 , td "МКД"
                 ]
             , R.tr_
                 [ tdLeft "Даночна основа за пресметка на данок на личен доход"
                 , td ""
-                , td (show model.dldOsnova10)
+                , td (showInt model.dldOsnova10)
                 , td "МКД"
                 ]
             , R.tr_
                 [ tdLeft "Данок на личен доход"
                 , td (showPercentage procentiDanoci.dld10)
-                , td (show model.danoci.dld10)
+                , td (showInt model.danociDld10)
                 , td "МКД"
                 ]
             , R.tr_
                 [ tdLeft "Вкупно придонеси и данок"
                 , td ""
-                , td (show model.vkupnoDavacki)
+                , td (showInt model.vkupnoDavacki)
                 , td "МКД"
                 ]
             , R.tr {style: bold, children:
                 [ tdLeft "Нето"
                 , td ""
-                , td (show model.neto)
+                , td (showInt model.neto)
                 , td "МКД"
                 ]}
             ]
@@ -294,7 +299,7 @@ mkMainView = do
   inputFields <- mkInputFields
 
   component "MainView" \_ -> React.do
-    model /\ dispatch <- React.useReducer (bruto2neto 0) reducer
+    model /\ dispatch <- React.useReducer (bruto2neto 0.0) reducer
 
     pure $ R.div_
         [ R.div_ [ ribbon ]

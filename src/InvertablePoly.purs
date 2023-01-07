@@ -58,7 +58,7 @@ infixr 4 pmul as :*:
 psub :: Poly -> Poly -> Poly
 psub p1 p2 = padd p1 (pmul (-1.0) p2)
 
-infixr 6 psub as :-:
+infixl 6 psub as :-:
 
 x :: Poly
 x = Poly $ (Constituent One 1.0) : Nil
