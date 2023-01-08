@@ -15,9 +15,7 @@ module Danok
 
 import Prelude
 import Data.Foldable (sum)
-import Data.Generic.Rep (from)
 import Data.Int (floor, round, toNumber)
-import InvertablePoly (Poly(..), mkPoly)
 
 type Model
   = { bruto :: Int
@@ -105,10 +103,8 @@ presmetajPridonesi bruto p =
   , boluvanje: bruto # od p.boluvanje
   }
 
--- sumaPridonesi :: forall number. Semiring number => Pridonesi number -> number
-sumaPridonesi p =
-  [ p.penzisko, p.zdravstveno, p.nevrabotenost, p.boluvanje ]
-    # sum
+sumaPridonesi :: forall number. Semiring number => Pridonesi number -> number
+sumaPridonesi p = sum [ p.penzisko, p.zdravstveno, p.nevrabotenost, p.boluvanje ]
 
 -- Главни функции за конверзија од бруто во нето и обратно
 bruto2neto :: Int -> Model
