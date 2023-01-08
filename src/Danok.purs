@@ -17,16 +17,16 @@ import Prelude
 import Data.Foldable (sum)
 import Data.Int (floor, round, toNumber)
 
-type Model
-  = { bruto :: Int
-    , neto :: Int
-    , pridonesi :: Pridonesi Int
-    , danoci :: Danoci Int
-    , dldOsnova10 :: Int
-    , vkupnoDavacki :: Int
-    , vkupnoPridonesi :: Int
-    , brutoMinusPridonesi :: Int
-    }
+type Model =
+  { bruto :: Int
+  , neto :: Int
+  , pridonesi :: Pridonesi Int
+  , danoci :: Danoci Int
+  , dldOsnova10 :: Int
+  , vkupnoDavacki :: Int
+  , vkupnoPridonesi :: Int
+  , brutoMinusPridonesi :: Int
+  }
 
 initModel :: Model
 initModel =
@@ -67,9 +67,9 @@ minOsnovica = prosecnaPlata / 2
 od :: Number -> Int -> Int
 od x val = round (x * (toNumber val))
 
-type Danoci number
-  = { dld10 :: number -- данок на личен доход од 10%
-    }
+type Danoci number =
+  { dld10 :: number -- данок на личен доход од 10%
+  }
 
 procentiDanoci :: Danoci Number
 procentiDanoci = { dld10: 0.1 }
@@ -80,12 +80,12 @@ presmetajDanoci osnova d = { dld10: od d.dld10 osnova }
 sumaDanoci :: forall number. Danoci number -> number
 sumaDanoci d = d.dld10
 
-type Pridonesi number
-  = { penzisko :: number
-    , zdravstveno :: number
-    , nevrabotenost :: number
-    , boluvanje :: number
-    }
+type Pridonesi number =
+  { penzisko :: number
+  , zdravstveno :: number
+  , nevrabotenost :: number
+  , boluvanje :: number
+  }
 
 procentiPridonesi :: Pridonesi Number
 procentiPridonesi =

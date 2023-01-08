@@ -27,8 +27,7 @@ derive instance eqOrder :: Eq Order
 
 derive instance ordOrder :: Ord Order
 
-data Constituent
-  = Constituent Order Number
+data Constituent = Constituent Order Number
 
 orderOf :: Constituent -> Order
 orderOf (Constituent ord _) = ord
@@ -36,8 +35,7 @@ orderOf (Constituent ord _) = ord
 multiplierOf :: Constituent -> Number
 multiplierOf (Constituent _ nn) = nn
 
-data Poly
-  = Poly (List Constituent)
+data Poly = Poly (List Constituent)
 
 padd :: Poly -> Poly -> Poly
 padd (Poly p1) (Poly p2) = Poly (p1 <> p2)

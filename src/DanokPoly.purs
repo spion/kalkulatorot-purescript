@@ -4,8 +4,8 @@ import Prelude
 import Heterogeneous.Mapping (hmap)
 import InvertablePoly (Poly, mkPoly, pnum, toFunction, toInverseFunction, (:*:), (:+:), (:-:))
 
-procentiPridonesi ∷
-  { boluvanje ∷ Number, nevrabotenost ∷ Number, penzisko ∷ Number, zdravstveno ∷ Number }
+procentiPridonesi
+  ∷ { boluvanje ∷ Number, nevrabotenost ∷ Number, penzisko ∷ Number, zdravstveno ∷ Number }
 procentiPridonesi =
   { penzisko: 0.188
   , zdravstveno: 0.075
@@ -25,19 +25,19 @@ prosecnaPlata = 43509.0
 maxOsnovica :: Number
 maxOsnovica = prosecnaPlata * 16.0
 
-type Results a
-  = { bruto :: a
-    , brutoMinusPridonesi :: a
-    , danociDld10 :: a
-    , dldOsnova10 :: a
-    , neto :: a
-    , pridonesiBoluvanje :: a
-    , pridonesiNevrabotenost :: a
-    , pridonesiPenzisko :: a
-    , pridonesiZdravstveno :: a
-    , vkupnoDavacki :: a
-    , vkupnoPridonesi :: a
-    }
+type Results a =
+  { bruto :: a
+  , brutoMinusPridonesi :: a
+  , danociDld10 :: a
+  , dldOsnova10 :: a
+  , neto :: a
+  , pridonesiBoluvanje :: a
+  , pridonesiNevrabotenost :: a
+  , pridonesiPenzisko :: a
+  , pridonesiZdravstveno :: a
+  , vkupnoDavacki :: a
+  , vkupnoPridonesi :: a
+  }
 
 od :: Number -> Poly -> Poly
 od percent exp = percent :*: exp
@@ -87,8 +87,7 @@ brutoPFunctions = hmap toFunction brutoPolys
 applyWithArg :: Number -> (Number -> Number) -> Number
 applyWithArg arg f = f arg
 
-type Model
-  = Results Number
+type Model = Results Number
 
 bruto2neto :: Number -> Model
 bruto2neto bruto = hmap (applyWithArg bruto) brutoPFunctions
