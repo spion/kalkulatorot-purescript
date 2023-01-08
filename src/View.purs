@@ -1,10 +1,6 @@
-module View
-  ( mkMainView )
-  where
-
+module View (mkMainView) where
 
 import Prelude
-
 import DanokPoly (Model, bruto2neto, licnoOsloboduvanje, neto2bruto, procentiDanoci, procentiPridonesi)
 import Data.Int as DI
 import Data.Maybe (Maybe(..), fromMaybe)
@@ -16,100 +12,86 @@ import React.Basic.Events (handler)
 import React.Basic.Hooks (Component, JSX, Reducer, component, mkReducer, (/\))
 import React.Basic.Hooks as React
 
-data Action = Bruto String | Neto String
-
+data Action
+  = Bruto String
+  | Neto String
 
 showInt :: Number -> String
-
 showInt num = show (DI.round num)
 
 reducerFn :: Model -> Action -> Model
 reducerFn model msg = case msg of
-    Bruto b ->
-      case fromString b of
-        Nothing -> model
-        Just bv -> bruto2neto bv
-    Neto n ->
-      case fromString n of
-        Nothing -> model
-        Just nv -> neto2bruto nv
+  Bruto b -> case fromString b of
+    Nothing -> model
+    Just bv -> bruto2neto bv
+  Neto n -> case fromString n of
+    Nothing -> model
+    Just nv -> neto2bruto nv
 
 reducerEff :: Effect (Reducer Model Action)
 reducerEff = mkReducer reducerFn
 
-
-
 -- containerStyle : List (Attribute msg)
 containerStyle :: R.CSS
-containerStyle = R.css {
-  width: "600px",
-  left: "50%",
-  marginLeft: "-300px",
-  position: "absolute",
-  verticalAlign: "center",
-  font: "0.8em sans-serif"
-}
-
-    -- [ width: "600px"
-    -- , left: "50%"
-    -- , margin-left: "-300px"
-    -- , position: "absolute"
-    -- , vertical-align: "center"
-    -- , font: "0.8em sans-serif"
-    -- ]
-
+containerStyle =
+  R.css
+    { width: "600px"
+    , left: "50%"
+    , marginLeft: "-300px"
+    , position: "absolute"
+    , verticalAlign: "center"
+    , font: "0.8em sans-serif"
+    }
 
 bold :: R.CSS
 bold = R.css { fontWeight: "bold" }
 
-
-
 ribbon :: JSX
 ribbon =
-    R.a { href: "https://github.com/skopjehacklab/kalkulator.ot.mk",
-        children: [ R.img { style: R.css {
-                position: "absolute"
-            , top: "0"
-            , left: "0"
-            , border: "0"
-              }
+  R.a
+    { href: "https://github.com/skopjehacklab/kalkulator.ot.mk"
+    , children:
+        [ R.img
+            { style:
+                R.css
+                  { position: "absolute"
+                  , top: "0"
+                  , left: "0"
+                  , border: "0"
+                  }
             , src: "https://s3.amazonaws.com/github/ribbons/forkme_left_orange_ff7600.png"
             , alt: "Fork me on GitHub"
-          }
+            }
         ]
     }
 
-
 pdfLinkTxt :: String
-pdfLinkTxt =
-    "Закон за данокот на личен доход"
-
+pdfLinkTxt = "Закон за данокот на личен доход"
 
 pdfLinkStyle :: R.CSS
-pdfLinkStyle = R.css
-  { float: "right"
-  , padding: "10px"
-  , fontSize: "12px"
-  , backgroundColor: "#fffcda"
-  , color: "#000000"
-  }
-
+pdfLinkStyle =
+  R.css
+    { float: "right"
+    , padding: "10px"
+    , fontSize: "12px"
+    , backgroundColor: "#fffcda"
+    , color: "#000000"
+    }
 
 pdfLink :: JSX
 pdfLink =
-    R.a { style: pdfLinkStyle,
-          href: "http://ujp.gov.mk/e/regulativa/opis/337",
-          title: pdfLinkTxt,
-          target: "_blank",
-          rel: "noopener",
-          children: [ R.text pdfLinkTxt ]
-        }
-
-
-
+  R.a
+    { style: pdfLinkStyle
+    , href: "http://ujp.gov.mk/e/regulativa/opis/337"
+    , title: pdfLinkTxt
+    , target: "_blank"
+    , rel: "noopener"
+    , children: [ R.text pdfLinkTxt ]
+    }
 
 splitter :: R.CSS
-splitter = R.css
+splitter =
+  R.css
     { marginBottom: "30px"
     , borderBottom: "5px solid #afafaf"
     , borderLeft: "5px solid #afafaf"
@@ -119,9 +101,9 @@ splitter = R.css
     , width: "600px"
     }
 
-
 inputStyle :: R.CSS
-inputStyle = R.css
+inputStyle =
+  R.css
     { boxSizing: "border-box"
     , lineHeight: "1.25"
     , padding: ".5rem .75rem"
@@ -131,97 +113,91 @@ inputStyle = R.css
     , border: "1px solid rgba(0,0,0,.15)"
     }
 
-
 rowStyle :: { borderBottom :: String, padding :: String, textAlign :: String }
 rowStyle =
-    { borderBottom: "1px solid #afafaf"
-    , padding: "15px"
-    , textAlign: "left"
-    }
-
+  { borderBottom: "1px solid #afafaf"
+  , padding: "15px"
+  , textAlign: "left"
+  }
 
 td :: String -> JSX
-td txt =
-  R.td { style: R.css (rowStyle { textAlign = "right"}), children: [ R.text txt ] }
-
+td txt = R.td { style: R.css (rowStyle { textAlign = "right" }), children: [ R.text txt ] }
 
 tdLeft :: String -> JSX
-tdLeft txt =
-    R.td {style: R.css rowStyle, children: [ R.text txt ]}
+tdLeft txt = R.td { style: R.css rowStyle, children: [ R.text txt ] }
 
-
-mkInputFields :: Component {model :: Model, dispatch :: Action -> Effect Unit }
+mkInputFields :: Component { model :: Model, dispatch :: Action -> Effect Unit }
 mkInputFields = do
-
-  -- reducer <- reducerEff
-
   component "InputFields" \props -> React.do
-
-    -- state /\ dispatch <- React.useReducer (bruto2neto 0) reducer
-
-    -- Need to deal with onInput Bruto
-    pure $ R.table {style: splitter, children:
-        [ R.tr_
-            [ R.th_ [ R.text "Бруто" ]
-            , R.th_ [ R.text "Нето" ]
-            ]
-        , R.tr_
-            [ R.td_ [
-                R.input {
-                  title: "Бруто, износ кој ја вклучува чистата плата што ја добива работникот (нето-плата) заедно со сите јавни давачки (даноци и придонеси), во бруто-платата се вклучени надоместоците кои ги добиваат вработените за храна и за превоз",
-                  type: "number",
-                  placeholder: "Бруто",
-                  onChange: handler targetValue \v -> props.dispatch (Bruto $ fromMaybe "" v),
-                  value: (showInt props.model.bruto), style: inputStyle
-                }
+    pure
+      $ R.table
+          { style: splitter
+          , children:
+              [ R.tr_
+                  [ R.th_ [ R.text "Бруто" ]
+                  , R.th_ [ R.text "Нето" ]
+                  ]
+              , R.tr_
+                  [ R.td_
+                      [ R.input
+                          { title: "Бруто, износ кој ја вклучува чистата плата што ја добива работникот (нето-плата) заедно со сите јавни давачки (даноци и придонеси), во бруто-платата се вклучени надоместоците кои ги добиваат вработените за храна и за превоз"
+                          , type: "number"
+                          , placeholder: "Бруто"
+                          , onChange: handler targetValue \v -> props.dispatch (Bruto $ fromMaybe "" v)
+                          , value: (showInt props.model.bruto)
+                          , style: inputStyle
+                          }
+                      ]
+                  , R.td_
+                      [ R.input
+                          { title: "Нето, чистата плата што ја добива работникот на својата трансакциска сметка"
+                          , type: "number"
+                          , placeholder: "Нето"
+                          , onChange: handler targetValue \v -> props.dispatch (Neto $ fromMaybe "" v)
+                          , value: (showInt props.model.neto)
+                          , style: inputStyle
+                          }
+                      ]
+                  ]
               ]
-            , R.td_ [
-                R.input {
-                  title: "Нето, чистата плата што ја добива работникот на својата трансакциска сметка",
-                  type: "number",
-                  placeholder: "Нето",
-                  onChange: handler targetValue \v -> props.dispatch (Neto $ fromMaybe "" v),
-                  value: (showInt props.model.neto), style: inputStyle
-                }
-              ]
-            ]
-        ]
-    }
+          }
 
 infoIcon :: JSX
 infoIcon =
-    R.span {
-        style: R.css
-        { display: "inline-block"
-        , width: "16px"
-        , height: "16px"
-        , textAlign: "center"
-        , borderRadius: "50%"
-        , background: "#9898ea"
-        , color: "#fff"
-        , marginRight: "5px"
-        , userSelect: "none"
-        },
-        children: [ R.i_ [ R.text "i" ] ]
+  R.span
+    { style:
+        R.css
+          { display: "inline-block"
+          , width: "16px"
+          , height: "16px"
+          , textAlign: "center"
+          , borderRadius: "50%"
+          , background: "#9898ea"
+          , color: "#fff"
+          , marginRight: "5px"
+          , userSelect: "none"
+          }
+    , children: [ R.i_ [ R.text "i" ] ]
     }
 
 showPercentage :: Number -> String
 showPercentage num = (show $ round (num * 10000.0) / 100.0) <> "%"
 
-
 details :: Model -> JSX
 details model =
-    R.div
-      { style: R.css { margin: "0 0 50px 0" }
-      , children:
-
+  R.div
+    { style: R.css { margin: "0 0 50px 0" }
+    , children:
         [ R.table_
-            [ R.tr {style: bold, children:
-                [ tdLeft "Бруто"
-                , td ""
-                , td (showInt model.bruto)
-                , td "МКД"
-                ]}
+            [ R.tr
+                { style: bold
+                , children:
+                    [ tdLeft "Бруто"
+                    , td ""
+                    , td (showInt model.bruto)
+                    , td "МКД"
+                    ]
+                }
             , R.tr_
                 [ tdLeft "Придонеси за задолжително ПИО"
                 , td (showPercentage procentiPridonesi.penzisko)
@@ -246,12 +222,15 @@ details model =
                 , td (showInt model.pridonesiBoluvanje)
                 , td "МКД"
                 ]
-            , R.tr {style: bold, children:
-                [ tdLeft "Вкупно придонеси"
-                , td ""
-                , td (showInt model.vkupnoPridonesi)
-                , td "МКД"
-                ]}
+            , R.tr
+                { style: bold
+                , children:
+                    [ tdLeft "Вкупно придонеси"
+                    , td ""
+                    , td (showInt model.vkupnoPridonesi)
+                    , td "МКД"
+                    ]
+                }
             , R.tr_
                 [ tdLeft "Бруто плата намалена за придонеси"
                 , td ""
@@ -282,33 +261,34 @@ details model =
                 , td (showInt model.vkupnoDavacki)
                 , td "МКД"
                 ]
-            , R.tr {style: bold, children:
-                [ tdLeft "Нето"
-                , td ""
-                , td (showInt model.neto)
-                , td "МКД"
-                ]}
+            , R.tr
+                { style: bold
+                , children:
+                    [ tdLeft "Нето"
+                    , td ""
+                    , td (showInt model.neto)
+                    , td "МКД"
+                    ]
+                }
             ]
         ]
-      }
-
+    }
 
 mkMainView :: Component {}
 mkMainView = do
-
   reducer <- reducerEff
   inputFields <- mkInputFields
-
   component "MainView" \_ -> React.do
     model /\ dispatch <- React.useReducer (bruto2neto 0.0) reducer
-
-    pure $ R.div_
-        [ R.div_ [ ribbon ]
-        , R.div_ [ pdfLink ]
-        , R.div {
-             style: containerStyle, children:
-            [ inputFields { model: model, dispatch: dispatch }
-            , details model
-            ]
-          }
-        ]
+    pure
+      $ R.div_
+          [ R.div_ [ ribbon ]
+          , R.div_ [ pdfLink ]
+          , R.div
+              { style: containerStyle
+              , children:
+                  [ inputFields { model: model, dispatch: dispatch }
+                  , details model
+                  ]
+              }
+          ]

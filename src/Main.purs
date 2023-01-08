@@ -1,7 +1,6 @@
 module Main where
 
 import Prelude
-
 import Data.Maybe (Maybe(..))
 import Effect (Effect)
 import Effect.Exception (throw)
@@ -27,6 +26,5 @@ main = do
 mkApp :: Component {}
 mkApp = do
   mainView <- mkMainView
-
   component "App" \_ -> React.do
     pure $ mainView {}
