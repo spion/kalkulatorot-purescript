@@ -1,14 +1,16 @@
 module InvertablePoly
-  ( (:*:)
+  ( (*:)
+  , (:*)
   , (:+:)
   , (:-:)
   , Constituent(..)
   , Order(..)
   , Poly(..)
   , mkPoly
-  , pnum
   , padd
   , pmul
+  , pmulFlipped
+  , pnum
   , psub
   , toFunction
   , toInverseFunction
@@ -51,7 +53,12 @@ cmul a (Constituent ord nn) = Constituent ord (a * nn)
 pmul :: Number -> Poly -> Poly
 pmul a (Poly l) = Poly (map (cmul a) l)
 
-infixr 4 pmul as :*:
+infixr 4 pmul as *:
+
+pmulFlipped :: Poly -> Number -> Poly
+pmulFlipped = flip pmul
+
+infixl 4 pmulFlipped as :*
 
 psub :: Poly -> Poly -> Poly
 psub p1 p2 = padd p1 (pmul (-1.0) p2)

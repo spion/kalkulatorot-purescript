@@ -2,7 +2,7 @@ module DanokPoly where
 
 import Prelude
 import Heterogeneous.Mapping (hmap)
-import InvertablePoly (Poly, mkPoly, pnum, toFunction, toInverseFunction, (:*:), (:+:), (:-:))
+import InvertablePoly (Poly, mkPoly, pnum, toFunction, toInverseFunction, (:*), (:+:), (:-:))
 
 procentiPridonesi
   ∷ { boluvanje ∷ Number, nevrabotenost ∷ Number, penzisko ∷ Number, zdravstveno ∷ Number }
@@ -39,20 +39,17 @@ type Results a =
   , vkupnoPridonesi :: a
   }
 
-od :: Number -> Poly -> Poly
-od percent exp = percent :*: exp
-
 brutoPolys :: Results Poly
 brutoPolys =
   mkPoly \bruto ->
     let
-      pridonesiPenzisko = procentiPridonesi.penzisko :*: bruto
+      pridonesiPenzisko = bruto :* procentiPridonesi.penzisko
 
-      pridonesiZdravstveno = procentiPridonesi.zdravstveno :*: bruto
+      pridonesiZdravstveno = bruto :* procentiPridonesi.zdravstveno
 
-      pridonesiNevrabotenost = procentiPridonesi.nevrabotenost :*: bruto
+      pridonesiNevrabotenost = bruto :* procentiPridonesi.nevrabotenost
 
-      pridonesiBoluvanje = procentiPridonesi.boluvanje :*: bruto
+      pridonesiBoluvanje = bruto :* procentiPridonesi.boluvanje
 
       vkupnoPridonesi =
         pridonesiPenzisko
@@ -62,7 +59,7 @@ brutoPolys =
 
       dldOsnova = bruto :-: vkupnoPridonesi :-: (pnum licnoOsloboduvanje)
 
-      danociDld10 = procentiDanoci.dld10 :*: dldOsnova
+      danociDld10 = dldOsnova :* procentiDanoci.dld10
 
       vkupnoDanoci = danociDld10
 

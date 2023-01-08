@@ -16,9 +16,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "spago":"^0.20.9",
+    "purescript": "^0.15.7",
+    "purs-tidy":"^0.9.2",
+    "esbuild": "^0.16.12",
     "http-server":"^14.1.1",
     "npm-run-all":"^4.1.5",
-    "esbuild": "^0.16.12",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   }

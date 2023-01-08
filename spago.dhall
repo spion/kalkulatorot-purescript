@@ -20,7 +20,6 @@ to generate this file without the comments in this block.
   , "maybe"
   , "numbers"
   , "prelude"
-  , "profunctor-lenses"
   , "react-basic"
   , "react-basic-dom"
   , "react-basic-hooks"
