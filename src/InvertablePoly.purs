@@ -3,8 +3,6 @@ module InvertablePoly
   , (:*)
   , (:+:)
   , (:-:)
-  , Constituent(..)
-  , Order(..)
   , Poly(..)
   , mkPoly
   , padd
@@ -20,38 +18,26 @@ import Prelude
 import Data.Foldable (sum)
 import Data.List (List(..), filter, (:))
 
--- No support to invert higher order polynomals
-data Order
-  = Zero
-  | One
+-- neto = a*bruto + b
+-- bruto = (neto - b) / a
 
-derive instance eqOrder :: Eq Order
+-- y = a*x + b + a2x + b2 + c * (dx + e)
 
-derive instance ordOrder :: Ord Order
+-- y = (a + a2 + c*d) * x + (b + b2 + c*e)
 
-data Constituent = Constituent Order Number
-
-orderOf :: Constituent -> Order
-orderOf (Constituent ord _) = ord
-
-multiplierOf :: Constituent -> Number
-multiplierOf (Constituent _ nn) = nn
-
-data Poly = Poly (List Constituent)
+-- ax + b
+data Poly = Poly Number Number
 
 padd :: Poly -> Poly -> Poly
-padd (Poly p1) (Poly p2) = Poly (p1 <> p2)
+padd (Poly a1 b1) (Poly a2 b2) = Poly (a1 + a2) (b1 + b2)
 
 infixr 6 padd as :+:
 
 pnum :: Number -> Poly
-pnum a = Poly (Constituent Zero a : Nil)
-
-cmul :: Number -> Constituent -> Constituent
-cmul a (Constituent ord nn) = Constituent ord (a * nn)
+pnum b = Poly 0.0 b
 
 pmul :: Number -> Poly -> Poly
-pmul a (Poly l) = Poly (map (cmul a) l)
+pmul c (Poly a b) = Poly (c * a) (c * b)
 
 infixr 4 pmul as *:
 
@@ -66,36 +52,19 @@ psub p1 p2 = padd p1 (pmul (-1.0) p2)
 infixl 6 psub as :-:
 
 x :: Poly
-x = Poly $ (Constituent One 1.0) : Nil
-
-polyToMultipliers :: Poly -> { a :: Number, b :: Number }
-polyToMultipliers (Poly poly) =
-  let
-    xes = (filter (eq One <<< orderOf) poly)
-
-    consts = (filter (eq Zero <<< orderOf) poly)
-
-    a = sum (map multiplierOf xes)
-
-    b = sum (map multiplierOf consts)
-  in
-    { a, b }
+x = Poly 1.0 0.0
 
 toFunction :: Poly -> Number -> Number
-toFunction poly =
+toFunction (Poly a b) =
   let
-    { a, b } = polyToMultipliers poly
-
-    fn xVal = a * xVal + b
+    fn x = a * x + b
   in
     fn
 
 toInverseFunction :: Poly -> Number -> Number
-toInverseFunction poly =
+toInverseFunction (Poly a b) =
   let
-    { a, b } = polyToMultipliers poly
-
-    fn yVal = (yVal - b) / a
+    fn y = (y - b) / a
   in
     fn
 
